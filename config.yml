@@ -33,7 +33,7 @@
         - name: Add repo to apt
           ansible.builtin.apt_repository:
             repo: >
-              deb [arch={{ ansible_architecture }} signed-by=/etc/apt/keyrings/docker.asc]
+              deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc]
               https://download.docker.com/linux/ubuntu
               {{ ansible_distribution_release }} stable
             state: present
@@ -60,10 +60,16 @@
             body_format: json
           register: page
 
+        - name: Create docker-compose folder
+          ansible.builtin.file:
+            path: /usr/local/bin/docker-compose
+            state: directory
+            mode: '0755'
+
         - name: Install Docker-compose
           ansible.builtin.get_url:
             url: "https://github.com/docker/compose/releases/download/{{ page.json.tag_name }}/docker-compose-linux-x86_64"
-            dest: /usr/local/lib/docker/cli-plugins
+            dest: /usr/local/bin/docker-compose
             mode: '0755'
 
     - name: Complete the installation
@@ -72,8 +78,9 @@
         - name: Add user to group docker
           ansible.builtin.user:
             name: "{{ ansible_user }}"
-            group: docker
+            groups: docker
             append: true
 
-        - name: Reboot
+        - name: Reboot system
           ansible.builtin.reboot:
+            msg: "Rebooting system to finalize installation"
