@@ -1,0 +1,19 @@
+---
+- name: Deploy
+  hosts: deploy
+  roles:
+    - config
+#    - deploy
+#    - swarm_init
+
+- name: Manager
+  hosts: managers
+  roles:
+    - config
+#    - swarm_join
+
+- name: Worker
+  hosts: workers
+  roles:
+    - config
+#    - swarm_join
