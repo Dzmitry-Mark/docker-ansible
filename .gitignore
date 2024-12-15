@@ -1,0 +1,7 @@
+# Vagrant
+.vagrant/
+*.log
+*.box
+
+#VScode
+.vscode/
